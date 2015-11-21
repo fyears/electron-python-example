@@ -1,8 +1,10 @@
-var app = require('app');  // Module to control application life.
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
+const electron = require('electron');
+const app = electron.app;  // Module to control application life.
+const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
 // Report crashes to our server.
-require('crash-reporter').start();
+electron.crashReporter.start();
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the javascript object is GCed.
@@ -31,7 +33,7 @@ app.on('ready', function() {
     // mainWindow.loadURL('file://' + __dirname + '/index.html');
     mainWindow.loadURL('http://localhost:5000');
     // Open the devtools.
-    mainWindow.openDevTools();
+    mainWindow.webContents.openDevTools();
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
       // Dereference the window object, usually you would store windows

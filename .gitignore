@@ -1,0 +1,4 @@
+node_modules/
+.venv
+venv
+*.pyc
