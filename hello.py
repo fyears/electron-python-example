@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    #sleep(5)
     return "Hello World!"
 
 if __name__ == "__main__":
     print('oh hello')
+    #sleep(10)
     sys.stdout.flush()
     app.run()

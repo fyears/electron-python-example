@@ -1,5 +1,9 @@
 {
-  "name"    : "your-app",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "your-app",
+  "version": "0.2.0",
+  "main": "main.js",
+  "dependencies": {
+    "request-promise": "*",
+    "electron-prebuilt": "*"
+  }
 }

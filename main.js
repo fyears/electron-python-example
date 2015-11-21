@@ -21,24 +21,40 @@ app.on('ready', function() {
   // call python?
   var subpy = require('child_process').spawn('python', ['./hello.py']);
 
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+  var rq = require('request-promise');
+  var mainAddr = 'http://localhost:5000';
 
-  // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
-  //mainWindow.loadUrl('http://localhost:5000');
+  var openWindow = function(){
+    // Create the browser window.
+    mainWindow = new BrowserWindow({width: 800, height: 600});
+    // and load the index.html of the app.
+    // mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.loadURL('http://localhost:5000');
+    // Open the devtools.
+    mainWindow.openDevTools();
+    // Emitted when the window is closed.
+    mainWindow.on('closed', function() {
+      // Dereference the window object, usually you would store windows
+      // in an array if your app supports multi windows, this is the time
+      // when you should delete the corresponding element.
+      mainWindow = null;
+      // kill python
+      subpy.kill('SIGINT');
+    });
+  };
 
-  // Open the devtools.
-  mainWindow.openDevTools();
+  var startUp = function(){
+    rq(mainAddr)
+      .then(function(htmlString){
+        console.log('server started!');
+        openWindow();
+      })
+      .catch(function(err){
+        //console.log('waiting for the server start...');
+        startUp();
+      });
+  };
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-
-    // kill python
-    subpy.kill('SIGINT');
-  });
+  // fire!
+  startUp();
 });
