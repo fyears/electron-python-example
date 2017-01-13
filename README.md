@@ -68,7 +68,7 @@ as well as the `main.js`:
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-electron.crashReporter.start();
+//electron.crashReporter.start();
 
 var mainWindow = null;
 
