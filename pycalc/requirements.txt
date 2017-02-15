@@ -1,0 +1,3 @@
+zerorpc
+pyinstaller
+pypiwin32

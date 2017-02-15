@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello Calculator!</title>
+  </head>
+  <body>
+    <h1>Hello Calculator!</h1>
+    <p> We are using Node.js <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.</p>
+    <p>Input something like <code>1 + 1</code>.</p>
+    <p>This calculator supports <code>+-*/^()</code>, 
+    whitespaces, and integers and floating numbers.</p>
+    <input id="formula" value="1 + 2.0 * 3.1 / (4 ^ 5.6)"></input>
+    <div id="result"></div>
+  </body>
+
+  <script>
+    require('./renderer.js')
+  </script>
+</html>

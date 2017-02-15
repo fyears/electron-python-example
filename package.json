@@ -1,0 +1,25 @@
+{
+  "name": "pretty-calculator",
+  "version": "1.0.0",
+  "description": "A minimal Electron and Python - based calculator ",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/fyears/electron-python-example",
+  "keywords": [
+    "Electron",
+    "Python",
+    "zerorpc",
+    "demo"
+  ],
+  "author": "fyears",
+  "license": "MIT",
+  "dependencies": {
+    "zerorpc": "*"
+  },
+  "devDependencies": {
+    "electron": "^1.4.1",
+    "electron-packager": "^8.5.1"
+  }
+}
