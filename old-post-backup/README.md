@@ -2,7 +2,7 @@
 
 **This (sub-) demo is deprecated.**
 
-Checkout the [paraent folder](../) for a better solution / demo and the better explanation.
+Checkout the [paraent folder](https://github.com/fyears/electron-python-example) for a better solution / demo and the better explanation.
 
 This folder is intented for backup only.
 
