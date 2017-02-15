@@ -1,4 +1,12 @@
-An example to use electron and python.
+# important
+
+**This (sub-) demo is deprecated.**
+
+Checkout the [paraent folder](../) for a better solution / demo and the better explanation.
+
+This folder is intented for backup only.
+
+# An example to use electron and python.
 
 The following are copied from my original [blog post](https://www.fyears.org/2015/06/electron-as-gui-of-python-apps.html).
 
