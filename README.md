@@ -1,24 +1,26 @@
 # Electron as GUI of Python Applications (Updated)
 
-The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). Two versions of the post should be kept the same.
-
 ## tl;dr
 
 This post shows how to use Electron as the GUI component of Python applications. (Updated version of one of my previous posts.) The frontend and backend communicate with each other using `zerorpc`. The complete code is on [GitHub repo](https://github.com/fyears/electron-python-example).
+
+## important notice
+
+The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). They should be the same.
 
 ## original post and debates
 
 ### attention
 
-The current post is an **updated** version of the [previous post](https://www.fyears.org/2015/06/electron-as-gui-of-python-apps.html) a few years before. Readers do **NOT** need to read the previous post if haven't.
+The current post is a **updated** version of the [previous post](https://www.fyears.org/2015/06/electron-as-gui-of-python-apps.html) a few years before. Readers do **NOT** need to read the previous post if haven't.
 
 ### debates
 
-I didn't expect that the previous post attracted so many visitors. Some other people even posted it onto Hacker News and Reddit. The previous post also attracted some criticisms. Here I would like to share my replies to some debates.
+I didn't expect that the previous post attracted so many visitors. Some other people even posted it on Hacker News and Reddit. The previous post also attracted some criticisms. Here I would like to share my replies to some debates.
 
 #### Do you know `Tkinter`, `GTK`, `QT` (`PySide` and `PyQT`), `wxPython`, `Kivy`, [`thrust`](https://github.com/breach/thrust), ...?
 
-Yes I know at least their existences and try a few of them. I still think `QT` is the best among them. BTW, [`pyotherside`](https://github.com/thp/pyotherside) is one of the actively maintaining bindings for Python. I am just offering another "web technology oriented" way here.
+Yes, I know at least their existences and try a few of them. I still think `QT` is the best among them. BTW, [`pyotherside`](https://github.com/thp/pyotherside) is one of the actively maintaining bindings for Python. I am just offering another "web technology oriented" way here.
 
 #### ... And [`cefpython`](https://github.com/cztomczak/cefpython).
 
@@ -26,7 +28,7 @@ It's more or less be in "lower level" than where Electron is. For example, `PySi
 
 #### I can directly write things in JavaScript!
 
-Correct. Unless some libraries such as `numpy` are not available in JS. Morever, the original intention is using Electron / JavaScript / web technologies to **enhance Python Applications**.
+Correct. Unless some libraries such as `numpy` are not available in JS. Moreover, the original intention is using Electron / JavaScript / web technologies to **enhance Python Applications**.
 
 #### I can use [`QT WebEngine`](http://doc.qt.io/qt-5/qtwebengine-index.html).
 
@@ -34,13 +36,13 @@ Go ahead and give it a try. But since you are using "web engine", why not also g
 
 #### You have two runtimes!
 
-Yes. One for JavaScript and one for Python. Unfortunately, Python and JavaScript are dynamic languages, which usually need run time support.
+Yes. One for JavaScript and one for Python. Unfortunately, Python and JavaScript are dynamic languages, which usually need run-time support.
 
 ## the architectures and the choice
 
-In the previous post, I showed an example architecture: Python to build up a `localhost` server, then electron is just a local web browser.
+In the previous post, I showed an example architecture: Python to build up a `localhost` server, then Electron is just a local web browser.
 
-```txt
+```text
 start
  |
  V
@@ -54,26 +56,26 @@ start
 |            | communication |                   |
 |            |               | (all html/css/js) |
 |            |               |                   |
-+------------+               +-------------------+ 
++------------+               +-------------------+
 ```
 
 That is **just one not-so-efficient solution**.
 
 Let's reconsider the core needs here: we have a Python application, and a Node.js application (Electron). How to combine them and communicate with each other?
 
-**We actually need an interprocess communication (IPC) mechanism.** It is unavoidable unless py and js have direct `ffi` for each other.
+**We actually need an interprocess communication (IPC) mechanism.** It is unavoidable unless Python and JavaScript have direct `FFI` for each other.
 
-HTTP is merely one of the popular ways to implement IPC, and it was merely the first thing came up in my mind when I was writing the previous post.
+HTTP is merely one of the popular ways to implement IPC, and it was merely the first thing came up to my mind when I was writing the previous post.
 
 We have more choices.
 
-We can (and should) use `socket`. Then, based on that, we want an abstract messaging layer that could be implemented with [`ZeroMq`](http://zeromq.org/) that is one of the best messaging library. Moreover, based on that, we need to define some schema upon raw data that could be implemented with [`zerorpc`](http://www.zerorpc.io/).
+We can (and should) use `socket`. Then, based on that, we want an abstract messaging layer that could be implemented with [`ZeroMq`](http://zeromq.org/) that is one of the best messaging libraries. Moreover, based on that, we need to define some schema upon raw data that could be implemented with [`zerorpc`](http://www.zerorpc.io/).
 
-(Luckily, `zerorpc` fits our needs here because it supports Python and Node.js. For more general languages support, checkout [`gRPC`](http://www.grpc.io/).)
+(Luckily, `zerorpc` fits our needs here because it supports Python and Node.js. For more general languages support, check out [`gRPC`](http://www.grpc.io/).)
 
 **Thus, in this post, I will show another example using `zerorpc` for communication as follows, which should be more efficient than what I showed in my previous post.**
 
-```txt
+```text
 start
  |
  V
@@ -88,18 +90,18 @@ start
 | (node.js runtime,  | <-----------> | (zeromq server)  |
 |  zeromq client)    | communication |                  |
 |                    |               |                  |
-+--------------------+               +------------------+ 
++--------------------+               +------------------+
 ```
 
 ## preparation
 
 Attention: the example could be successfully run on my Windows 10 machine with Python 3.5, Electron 1.4, Node.js v6.
 
-We need the python application, `python`, `pip`, `node`, `npm`, available in command line. For using `zerorpc`, we also need the C/C++ compilers (`cc` and `c++` in command line, and/or MSVC on Windows).
+We need the python application, `python`, `pip`, `node`, `npm`, available in command line. For using `zerorpc`, we also need the C/C++ compilers (`cc` and `c++` in the command line, and/or MSVC on Windows).
 
 The structure of this project is
 
-```txt
+```text
 .
 |-- index.html
 |-- main.js
@@ -115,13 +117,13 @@ The structure of this project is
 `-- README.md
 ```
 
-As you can see, the Python application is wrapped in a sub folder. In this example, Python application `pycalc/calc.py` provides a function: `calc(text)` that could take a text like `1 + 1 / 2` and return the result like `1.5`. The `pycalc/api.py` is what we are going to figure out.
+As shown above, the Python application is wrapped in a subfolder. In this example, Python application `pycalc/calc.py` provides a function: `calc(text)` that could take a text like `1 + 1 / 2` and return the result like `1.5` (assuming it be like `eval()`). The `pycalc/api.py` is what we are going to figure out.
 
 And the `index.html`, `main.js`, `package.json` and `renderer.js` are modified from [`electron-quick-start`](https://github.com/electron/electron-quick-start).
 
 ### Python part
 
-First of all, since you already have the Python application running, the Python environment should be fine. I strongly recommend developing Python applications in `virtualenv`.
+First of all, since we already have the Python application running, the Python environment should be fine. I strongly recommend developing Python applications in `virtualenv`.
 
 Try install `zerorpc`, and `pyinstaller` (for packaging).
 
@@ -130,19 +132,19 @@ pip install zerorpc
 pip install pyinstaller
 ```
 
-If you are on Windows, also
+If working on Windows, also
 
 ```bash
 pip install pypiwin32 # for pyinstaller
 ```
 
-If properly configured, the above commands should be no problem. Otherwise, please check out the guides online.
+If properly configured, the above commands should have no problem. Otherwise, please check out the guides online.
 
 ### Node.js / Electron part
 
-Secondly, try to configure the Node.js and Electron environment. I assume that `node` and `npm` could be invoked in command line and are latest versions.
+Secondly, try to configure the Node.js and Electron environment. I assume that `node` and `npm` can be invoked in the command line and are of latest versions.
 
-You need to configure the `package.json`, especially the `main` entry:
+We need to configure the `package.json`, especially the `main` entry:
 
 ```json
 {
@@ -161,17 +163,17 @@ You need to configure the `package.json`, especially the `main` entry:
 }
 ```
 
-Irony, to compile Node.js C/C++ native codes, we have need `python2` configured, no matter what Python version you are using for your Python application. Checkout the [official guide](https://github.com/nodejs/node-gyp).
+Ironically, to compile Node.js C/C++ native codes, we need to have `python2` configured, no matter what Python version we are using for our Python application. Check out the [official guide](https://github.com/nodejs/node-gyp).
 
-If you are on Windows, then open PowerShell **as Administrator**, and run
+If working on Windows, open PowerShell **as Administrator**, and run
 
 ```bash
 npm install --global --production windows-build-tools
 ```
 
-The above command installs Python 2.7 in `%USERPROFILE%\.windows-build-tools\python27` and other libraries. Everything should be set and should not cause any conflict with the development Python.
+The above command installs Python 2.7 in `%USERPROFILE%\.windows-build-tools\python27` and other VS libraries. Everything should be set and should not cause any conflict with the previously-installed Python environment.
 
-Then set the `npm` [specially for Electron](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md), and install the needed libraries.
+Then set the `npm` [for Electron](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md), and install the required libraries.
 
 ```bash
 # env
@@ -183,7 +185,7 @@ export npm_config_runtime=electron
 export npm_config_build_from_source=true
 npm config ls
 
-# clean cache, important!!!!!
+# clean caches, very important!!!!!
 rm -rf ~/.node-gyp
 rm -rf ~/.electron-gyp
 rm -rf ./node_modules
@@ -200,7 +202,7 @@ All libraries should be fine now.
 
 We want to build up a ZeroMQ server in Python end.
 
-Put `calc.py` into folder `pycalc/`. Then create another file `pycalc/api.py`. Checkout [`zerorpc-python`](https://github.com/0rpc/zerorpc-python) for reference.
+Put `calc.py` into folder `pycalc/`. Then create another file `pycalc/api.py`. Check [`zerorpc-python`](https://github.com/0rpc/zerorpc-python) for reference.
 
 ```python
 from __future__ import print_function
@@ -214,7 +216,7 @@ class CalcApi(object):
         try:
             return real_calc(text)
         except Exception as e:
-            return 0.0    
+            return 0.0
     def echo(self, text):
         """echo any text"""
         return text
@@ -241,13 +243,13 @@ zerorpc tcp://localhost:4242 calc "1 + 1"
 ## 2.0
 ```
 
-Atger debugging, **remember to terminate the Python function**.
+After debugging, **remember to terminate the Python function**.
 
-Actually, this is yet another **server**, communicated over `zeromq` over `tcp`, rather than traditional web server over HTTP.
+Actually, this is yet another **server**, communicated over `zeromq` over TCP, rather than traditional web server over HTTP.
 
 ### Node.js / Electron part
 
-Basic idea: In the main process, spawn the Python child process and create the window. In the render process, use Node.js runtime and `zerorpc` library to communicate with Python child process. All the HTML / JavaScript / CSS are managed by Electron, instead of by Python web server (The previous post showed using Python web server to return frontend codes).
+Basic idea: In the main process, spawn the Python child process and create the window. In the render process, use Node.js runtime and `zerorpc` library to communicate with Python child process. All the HTML / JavaScript / CSS are managed by Electron, instead of by Python web server (The example in the previous post used Python web server to dynamically generate HTML codes).
 
 In `main.js`, these are default codes to start from, with nothing special:
 
@@ -330,7 +332,7 @@ In `index.html`, we have an `<input>` for input, and `<div>` for output:
   <body>
     <h1>Hello Calculator!</h1>
     <p>Input something like <code>1 + 1</code>.</p>
-    <p>This calculator supports <code>+-*/^()</code>, 
+    <p>This calculator supports <code>+-*/^()</code>,
     whitespaces, and integers and floating numbers.</p>
     <input id="formula" value="1 + 2.0 * 3.1 / (4 ^ 5.6)"></input>
     <div id="result"></div>
@@ -341,7 +343,7 @@ In `index.html`, we have an `<input>` for input, and `<div>` for output:
 </html>
 ```
 
-In `renderer.js`, we have codes for initialization of `zerorpc` **client**, and the code for watching the changes in the input. Once user types some formula into the text area, the JS send the text to Python backend and retrieve the computed result.
+In `renderer.js`, we have codes for initialization of `zerorpc` **client**, and the code for watching the changes in the input. Once the user types some formula into the text area, the JS send the text to Python backend and retrieve the computed result.
 
 ```js
 // renderer.js
@@ -372,7 +374,9 @@ Run this to see the magic:
 ./node_modules/.bin/electron .
 ```
 
-If you see something like dynamic linking errors, try cleaning the cache and install the libraries again.
+Awesome!
+
+If something like dynamic linking errors shows up, try to clean the caches and install the libraries again.
 
 ```bash
 rm -rf node_modules
@@ -383,13 +387,13 @@ npm install
 
 ## packaging
 
-Some people are asking for the packaging ways. This is easy: apply the knowledge of how to package Python applications and Electron applications.
+Some people are asking for the packaging. This is easy: apply the knowledge of how to package Python applications and Electron applications.
 
 ### Python part
 
 User [PyInstaller](http://www.pyinstaller.org/).
 
-Run the following in terminal:
+Run the following in the terminal:
 
 ```bash
 pyinstaller pycalc/api.py --distpath pycalcdist
@@ -398,13 +402,13 @@ rm -rf build/
 rm -rf api.spec
 ```
 
-If everything goes well, you should see the `pycalcdist/api/` folder, and the excutable inside that folder. This is the complete independent Python excutable.
+If everything goes well, the `pycalcdist/api/` folder should show up, as well as the executable inside that folder. This is the complete independent Python executable that could be moved to somewhere else.
 
-**Attention: the independent Python excutable has to be generated!** Because the target machine you want to distribute to may not have correct Python shell and/or reuquired Python libraries. It's almost impossible to just copy the Python source codes.
+**Attention: the independent Python executable has to be generated!** Because the target machine we want to distribute to may not have correct Python shell and/or required Python libraries. It's almost impossible to just copy the Python source codes.
 
 ### Node.js / Electron part
 
-This is tricky because of the Python excutable.
+This is tricky because of the Python executable.
 
 In the above example code, I write
 
@@ -457,7 +461,7 @@ const createPyProc = () => {
   } else {
     pyProc = require('child_process').spawn('python', [script, port])
   }
- 
+
   if (pyProc != null) {
     //console.log(pyProc)
     console.log('child process success on port ' + port)
@@ -465,14 +469,14 @@ const createPyProc = () => {
 }
 ```
 
-The key point is, check whether `dist` folder has been generated or not. If generated, it means we are in "production" mode, `execFile` directly; otherwise, `spawn` the script using a Python shell.
+The key point is, check whether the `*dist` folder has been generated or not. If generated, it means we are in "production" mode, `execFile` the executable directly; otherwise, `spawn` the script using a Python shell.
 
-In the end, run [`electron-packager`](https://github.com/electron-userland/electron-packager) to generate the bundled application. We also want to exclude some folders (For example, `pycalc/` is not needed to be bundled), **using regex** (instead of glob, surprise!). The name, platform, and arch are inferred from `package.json`. For more options, checkout the docs.
+In the end, run [`electron-packager`](https://github.com/electron-userland/electron-packager) to generate the bundled application. We also want to exclude some folders (For example, `pycalc/` is no longer needed to be bundled), **using regex** (instead of glob, surprise!). The name, platform, and arch are inferred from `package.json`. For more options, check out the docs.
 
 ```bash
-# make sure you have bundled the latest Python code
+# we need to make sure we have bundled the latest Python code
 # before running the below command!
-# Or, actually, you could bundle the Python excutable later,
+# Or, actually, we could bundle the Python executable later,
 # and copy the output into the correct distributable Electron folder...
 
 ./node_modules/.bin/electron-packager . --overwrite --ignore="pycalc$" --ignore="\.venv" --ignore="old-post-backup"
@@ -482,7 +486,7 @@ In the end, run [`electron-packager`](https://github.com/electron-userland/elect
 
 I do not check `asar` format's availability. I guess it will slow down the startup speed.
 
-After that, you should see the generated packaged Electron in current directory! For me, the result is `./pretty-calculator-win32-x64/`. On my machine, it's around 170 MB (Electron itself occupies more than 84.2 MB). I also tried to compress it, the result `.7z` file is around 43.3 MB.
+After that, we have the generated packaged Electron in current directory! For me, the result is `./pretty-calculator-win32-x64/`. On my machine, it's around 170 MB (Electron itself occupies more than 84.2 MB). I also tried to compress it, the generated `.7z` file is around 43.3 MB.
 
 Copy / Move the folder(s) to anywhere or other machines to check the result! :-)
 
@@ -490,7 +494,7 @@ Copy / Move the folder(s) to anywhere or other machines to check the result! :-)
 
 ### full code?
 
-Checkout [GitHub `electron-python-example`](https://github.com/fyears/electron-python-example).
+See [GitHub `electron-python-example`](https://github.com/fyears/electron-python-example).
 
 ### further optimization?
 
@@ -500,12 +504,12 @@ What's more, use QT (huh??), rewrite necessary codes in Node.js / Go / C / C++ (
 
 ### Can I use other programming languages besides Python?
 
-Sure. The solution described here can also be applied to any other programming langauges besides Python. Except that, if you want to use Electron as GUI of C/C++ applications, I strongly recommend using Node.js native C/C++ communication mechanism instead of using IPC. Moreover, if you have Java, C# application, using `Swing` or `WPF` are much more mature choice.
+Sure. The solution described here can also be applied to any other programming languages besides Python. Except that, if you want to use Electron as GUI of C/C++ applications, I strongly recommend using Node.js native C/C++ communication mechanism instead of using IPC. Moreover, if you have Java, C# application, using `Swing` or `WPF` are much more mature choices.
 
-But, unfortunately, Electron is not for mobile applications and it makes little sense even if possible. Please use native GUI in those platforms.
+But, unfortunately, Electron is not for mobile applications and it makes little sense even if possible. Please use native GUI on those platforms.
 
 ## conclusion and further thinkings
 
-It's still a promising solution. For drawing interface, we want to use some markup language for declative UI. HTML happens to be one of the best choices, and its companion JS and CSS happen to have one of the most optimized renderers: web browser. That's why I am (so) interested in using web technologies for GUI when possible. A few years before the web browsers were not powerful enough, but the story is different now.
+It's still a promising solution. For drawing interface, we want to use some markup language for declarative UI. HTML happens to be one of the best choices, and its companions JS and CSS happen to have one of the most optimized renderers: the web browser. That's why I am (so) interested in using web technologies for GUI when possible. A few years before the web browsers were not powerful enough, but the story is kind of different now.
 
-I believe my updated post is valuable.
+I hope this post is helpful to you.
