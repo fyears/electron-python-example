@@ -1,0 +1,5 @@
+api.spec
+node_modules/
+build/
+dist/
+pycalcdist/
