@@ -173,7 +173,11 @@ npm install --global --production windows-build-tools
 
 The above command installs Python 2.7 in `%USERPROFILE%\.windows-build-tools\python27` and other VS libraries. Everything should be set and should not cause any conflict with the previously-installed Python environment.
 
+Also download VC 2010 runtime from [here](https://www.microsoft.com/en-us/download/details.aspx?id=14632) due to a [bug](https://github.com/JustinTulloss/zeromq.node/issues/582).
+
 Then set the `npm` [for Electron](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md), and install the required libraries.
+
+On Linux / OS X:
 
 ```bash
 # env
@@ -189,6 +193,30 @@ npm config ls
 rm -rf ~/.node-gyp
 rm -rf ~/.electron-gyp
 rm -rf ./node_modules
+```
+
+On Windows PowerShell, set environement variables in [different way](http://stackoverflow.com/questions/714877/setting-windows-powershell-path-variable):
+
+```powershell
+$env:npm_config_target="1.4.15" # electron version
+$env:npm_config_arch="x64"
+$env:npm_config_target_arch="x64"
+$env:npm_config_disturl="https://atom.io/download/electron"
+$env:npm_config_runtime="electron"
+$env:npm_config_build_from_source="true"
+npm config ls
+
+# clean caches, very important!!!!!
+Remove-Item "$($env:USERPROFILE)\.node-gyp" -Force -Recurse -ErrorAction Ignore
+Remove-Item "$($env:USERPROFILE)\.electron-gyp" -Force -Recurse -ErrorAction Ignore
+Remove-Item .\node_modules -Force -Recurse -ErrorAction Ignore
+```
+
+Then install things:
+
+```bash
+# in the same shell as above!!!
+# because you want to make good use of the above environment variables
 
 # install everything based on the package.json
 npm install
