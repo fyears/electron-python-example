@@ -6,7 +6,7 @@ This post shows how to use Electron as the GUI component of Python applications.
 
 ## important notice
 
-The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). They should be the same.
+The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). They should be the same. **If there are inconsistency, the `README.md` on the GitHub repo is more accurate.**
 
 ## original post and debates
 
@@ -125,16 +125,13 @@ And the `index.html`, `main.js`, `package.json` and `renderer.js` are modified f
 
 First of all, since we already have the Python application running, the Python environment should be fine. I strongly recommend developing Python applications in `virtualenv`.
 
-Try install `zerorpc`, and `pyinstaller` (for packaging).
+Try install `zerorpc`, and `pyinstaller` (for packaging). On Linux / Ubuntu we may need to run `sudo apt-get install libzmq3-dev` **before** `pip install`.
 
 ```bash
 pip install zerorpc
 pip install pyinstaller
-```
 
-If working on Windows, also
-
-```bash
+# for windows only
 pip install pypiwin32 # for pyinstaller
 ```
 
@@ -154,7 +151,7 @@ We need to configure the `package.json`, especially the `main` entry:
     "start": "electron ."
   },
   "dependencies": {
-    "zerorpc": "*"
+    "zerorpc": "fyears/zerorpc-node"
   },
   "devDependencies": {
     "electron": "^1.4.1",
@@ -163,53 +160,83 @@ We need to configure the `package.json`, especially the `main` entry:
 }
 ```
 
-Ironically, to compile Node.js C/C++ native codes, we need to have `python2` configured, no matter what Python version we are using for our Python application. Check out the [official guide](https://github.com/nodejs/node-gyp).
-
-If working on Windows, open PowerShell **as Administrator**, and run
+Clean the caches:
 
 ```bash
-npm install --global --production windows-build-tools
-```
-
-The above command installs Python 2.7 in `%USERPROFILE%\.windows-build-tools\python27` and other VS libraries. Everything should be set and should not cause any conflict with the previously-installed Python environment.
-
-Also download VC 2010 runtime from [here](https://www.microsoft.com/en-us/download/details.aspx?id=14632) due to a [bug](https://github.com/JustinTulloss/zeromq.node/issues/582).
-
-Then set the `npm` [for Electron](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md), and install the required libraries.
-
-On Linux / OS X:
-
-```bash
-# env
-export npm_config_target=1.4.15 # electron version
-export npm_config_arch=x64
-export npm_config_target_arch=x64
-export npm_config_disturl=https://atom.io/download/electron
-export npm_config_runtime=electron
-export npm_config_build_from_source=true
-npm config ls
-
+# On Linux / OS X
 # clean caches, very important!!!!!
 rm -rf ~/.node-gyp
 rm -rf ~/.electron-gyp
 rm -rf ./node_modules
 ```
 
-On Windows PowerShell, set environement variables in [different way](http://stackoverflow.com/questions/714877/setting-windows-powershell-path-variable):
-
 ```powershell
-$env:npm_config_target="1.4.15" # electron version
-$env:npm_config_arch="x64"
-$env:npm_config_target_arch="x64"
-$env:npm_config_disturl="https://atom.io/download/electron"
-$env:npm_config_runtime="electron"
-$env:npm_config_build_from_source="true"
-npm config ls
-
+# On Window PowerShell (not cmd.exe!!!)
 # clean caches, very important!!!!!
 Remove-Item "$($env:USERPROFILE)\.node-gyp" -Force -Recurse -ErrorAction Ignore
 Remove-Item "$($env:USERPROFILE)\.electron-gyp" -Force -Recurse -ErrorAction Ignore
 Remove-Item .\node_modules -Force -Recurse -ErrorAction Ignore
+```
+
+Then run `npm`:
+
+```bash
+# 1.4.15 is the version of electron
+# It's very important to set the electron version correctly!!!
+# check out the version value in your package.json
+npm install --runtime=electron --target=1.4.15
+
+# verify the electron binary and its version by opening it
+./node_modules/.bin/electron
+```
+
+The `npm install` will install `zerorpc-node` from [my fork](https://github.com/0rpc/zerorpc-node/pull/84) to skip building from sources.
+
+All libraries should be fine now.
+
+#### optional: building from sources
+
+If the above installation causes any errors **even while setting the electron version correctly**, we may have to build the packages from sources.
+
+Ironically, to compile Node.js C/C++ native codes, we need to have `python2` configured, no matter what Python version we are using for our Python application. Check out the [official guide](https://github.com/nodejs/node-gyp).
+
+Especially, if working on Windows, open PowerShell **as Administrator**, and run `npm install --global --production windows-build-tools` to install a separated Python 2.7 in `%USERPROFILE%\.windows-build-tools\python27` and other required VS libraries. We only need to do it at once.
+
+Then, **clean `~/.node-gyp` and `./node_modules` caches as described above at first.**
+
+Set the `npm` [for Electron](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md), and install the required libraries.
+
+Set the environment variables for Linux (Ubuntu) / OS X / Windows:
+
+```bash
+# On Linux / OS X:
+
+# env
+export npm_config_target=1.4.15 # electron version
+export npm_config_runtime=electron
+export npm_config_disturl=https://atom.io/download/electron
+export npm_config_build_from_source=true
+
+# may not be necessary
+#export npm_config_arch=x64
+#export npm_config_target_arch=x64
+
+npm config ls
+```
+
+```powershell
+# On Window PowerShell (not cmd.exe!!!)
+
+$env:npm_config_target="1.4.15" # electron version
+$env:npm_config_runtime="electron"
+$env:npm_config_disturl="https://atom.io/download/electron"
+$env:npm_config_build_from_source="true"
+
+# may not be necessary
+#$env:npm_config_arch="x64"
+#$env:npm_config_target_arch="x64"
+
+npm config ls
 ```
 
 Then install things:
@@ -220,9 +247,10 @@ Then install things:
 
 # install everything based on the package.json
 npm install
-```
 
-All libraries should be fine now.
+# verify the electron binary and its version by opening it
+./node_modules/.bin/electron
+```
 
 ## core functions
 
@@ -523,6 +551,14 @@ Copy / Move the folder(s) to anywhere or other machines to check the result! :-)
 ### full code?
 
 See [GitHub `electron-python-example`](https://github.com/fyears/electron-python-example).
+
+### solutions to errors
+
+[issue #6](https://github.com/fyears/electron-python-example/issues/6): `... failed with KeyError`
+
+[issue #7](https://github.com/fyears/electron-python-example/issues/7): `Uncaught Error: Module version mismatch. Expected 50, got 48.`
+
+Uninstall everything, **set up the npm environment variables correctly especially for the electron version**, remember to `activate` the virtualenv if using Python `virtualenv`.
 
 ### further optimization?
 
