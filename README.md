@@ -6,7 +6,7 @@ This post shows how to use Electron as the GUI component of Python applications.
 
 ## important notice
 
-The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). They should be the same. **If there are inconsistency, the `README.md` on the GitHub repo is more accurate.**
+The following are copied from my [original post](https://www.fyears.org/2017/02/electron-as-gui-of-python-apps-updated.html). They should be the same. **If there are inconsistencies, the `README.md` on the GitHub repo is more accurate.**
 
 ## original post and debates
 
@@ -192,6 +192,8 @@ npm install --runtime=electron --target=1.4.15
 
 The `npm install` will install `zerorpc-node` from [my fork](https://github.com/0rpc/zerorpc-node/pull/84) to skip building from sources.
 
+(Consider [adding `./.npmrc`](https://docs.npmjs.com/files/npmrc) in the project folder if necessary.)
+
 All libraries should be fine now.
 
 #### optional: building from sources
@@ -251,6 +253,8 @@ npm install
 # verify the electron binary and its version by opening it
 ./node_modules/.bin/electron
 ```
+
+(Consider [adding `./.npmrc`](https://docs.npmjs.com/files/npmrc) in the project folder if necessary.)
 
 ## core functions
 
