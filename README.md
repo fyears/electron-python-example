@@ -95,7 +95,7 @@ start
 
 ## preparation
 
-Attention: the example could be successfully run on my Windows 10 machine with Python 3.5, Electron 1.4, Node.js v6.
+Attention: the example could be successfully run on my Windows 10 machine with Python 3.6, Electron 1.7, Node.js v6.
 
 We need the python application, `python`, `pip`, `node`, `npm`, available in command line. For using `zerorpc`, we also need the C/C++ compilers (`cc` and `c++` in the command line, and/or MSVC on Windows).
 
@@ -151,11 +151,11 @@ We need to configure the `package.json`, especially the `main` entry:
     "start": "electron ."
   },
   "dependencies": {
-    "zerorpc": "fyears/zerorpc-node"
+    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {
-    "electron": "^1.4.1",
-    "electron-packager": "^8.5.1"
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.1"
   }
 }
 ```
@@ -181,10 +181,10 @@ Remove-Item .\node_modules -Force -Recurse -ErrorAction Ignore
 Then run `npm`:
 
 ```bash
-# 1.4.15 is the version of electron
+# 1.7.6 is the version of electron
 # It's very important to set the electron version correctly!!!
 # check out the version value in your package.json
-npm install --runtime=electron --target=1.4.15
+npm install --runtime=electron --target=1.7.6
 
 # verify the electron binary and its version by opening it
 ./node_modules/.bin/electron
@@ -214,7 +214,7 @@ Set the environment variables for Linux (Ubuntu) / OS X / Windows:
 # On Linux / OS X:
 
 # env
-export npm_config_target=1.4.15 # electron version
+export npm_config_target=1.7.6 # electron version
 export npm_config_runtime=electron
 export npm_config_disturl=https://atom.io/download/electron
 export npm_config_build_from_source=true
@@ -229,7 +229,7 @@ npm config ls
 ```powershell
 # On Window PowerShell (not cmd.exe!!!)
 
-$env:npm_config_target="1.4.15" # electron version
+$env:npm_config_target="1.7.6" # electron version
 $env:npm_config_runtime="electron"
 $env:npm_config_disturl="https://atom.io/download/electron"
 $env:npm_config_build_from_source="true"
@@ -540,7 +540,7 @@ In the end, run [`electron-packager`](https://github.com/electron-userland/elect
 # and copy the output into the correct distributable Electron folder...
 
 ./node_modules/.bin/electron-packager . --overwrite --ignore="pycalc$" --ignore="\.venv" --ignore="old-post-backup"
-## Packaging app for platform win32 x64 using electron v1.4.15
+## Packaging app for platform win32 x64 using electron v1.7.6
 ## Wrote new app to ./pretty-calculator-win32-x64
 ```
 

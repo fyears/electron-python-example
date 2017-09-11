@@ -16,10 +16,10 @@
   "author": "fyears",
   "license": "MIT",
   "dependencies": {
-    "zerorpc": "fyears/zerorpc-node"
+    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {
-    "electron": "^1.4.1",
-    "electron-packager": "^8.5.1"
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.1"
   }
 }
