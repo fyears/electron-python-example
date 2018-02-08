@@ -1,5 +1,7 @@
 api.spec
+package-lock.json
 .venv/
+__pycache__/
 node_modules/
 build/
 dist/

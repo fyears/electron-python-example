@@ -1,6 +1,6 @@
 {
   "name": "pretty-calculator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A minimal Electron and Python - based calculator ",
   "main": "main.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {
-    "electron": "^1.7.6",
-    "electron-packager": "^9.0.1"
+    "electron": "1.7.12",
+    "electron-packager": "11.0.0"
   }
 }

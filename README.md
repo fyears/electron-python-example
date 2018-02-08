@@ -95,7 +95,7 @@ start
 
 ## preparation
 
-Attention: the example could be successfully run on my Windows 10 machine with Python 3.6, Electron 1.7, Node.js v6.
+Attention: the example could be successfully run on my Windows 10 machine with Python 3.6, Electron 1.8.2, Node.js v8.9.4.
 
 We need the python application, `python`, `pip`, `node`, `npm`, available in command line. For using `zerorpc`, we also need the C/C++ compilers (`cc` and `c++` in the command line, and/or MSVC on Windows).
 
@@ -154,8 +154,8 @@ We need to configure the `package.json`, especially the `main` entry:
     "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {
-    "electron": "^1.7.6",
-    "electron-packager": "^9.0.1"
+    "electron": "1.7.12",
+    "electron-packager": "11.0.0"
   }
 }
 ```
@@ -180,11 +180,15 @@ Remove-Item .\node_modules -Force -Recurse -ErrorAction Ignore
 
 Then run `npm`:
 
+**Very important to adjust the target version!!! Ensure that the version in `package.json` and th e command below are the same!!!**
+
+When in doubt, **clean the cache using the command line above** and install every required packages below again.
+
 ```bash
-# 1.7.6 is the version of electron
+# 1.7.12 is the version of electron
 # It's very important to set the electron version correctly!!!
 # check out the version value in your package.json
-npm install --runtime=electron --target=1.7.6
+npm install --verbose --runtime=electron --target=1.7.12
 
 # verify the electron binary and its version by opening it
 ./node_modules/.bin/electron
@@ -195,6 +199,18 @@ The `npm install` will install `zerorpc-node` from [my fork](https://github.com/
 (Consider [adding `./.npmrc`](https://docs.npmjs.com/files/npmrc) in the project folder if necessary.)
 
 All libraries should be fine now.
+
+#### optional: slow Internet connection
+
+If you want to use a faster npm mirror, **before running `npm install`, try to edit `~/.npmrc` (Linux / OS X) or `%USERPROFILE%/.npmrc`, add these lines (adapt them to your favourite mirrors):
+
+```
+registry=https://registry.npm.taobao.org
+disturl=https://npm.taobao.org/dist
+electron_mirror=https://npm.taobao.org/mirrors/electron/
+```
+
+Then run `npm install <...>` as described in the previous section.
 
 #### optional: building from sources
 
@@ -214,7 +230,7 @@ Set the environment variables for Linux (Ubuntu) / OS X / Windows:
 # On Linux / OS X:
 
 # env
-export npm_config_target=1.7.6 # electron version
+export npm_config_target=1.7.12 # electron version
 export npm_config_runtime=electron
 export npm_config_disturl=https://atom.io/download/electron
 export npm_config_build_from_source=true
@@ -229,7 +245,7 @@ npm config ls
 ```powershell
 # On Window PowerShell (not cmd.exe!!!)
 
-$env:npm_config_target="1.7.6" # electron version
+$env:npm_config_target="1.7.12" # electron version
 $env:npm_config_runtime="electron"
 $env:npm_config_disturl="https://atom.io/download/electron"
 $env:npm_config_build_from_source="true"
@@ -456,11 +472,13 @@ User [PyInstaller](http://www.pyinstaller.org/).
 Run the following in the terminal:
 
 ```bash
-pyinstaller pycalc/api.py --distpath pycalcdist
+pyinstaller pycalc/api.py --distpath pycalcdist --exclude-module FixTk --exclude-module tcl --exclude-module tk --exclude-module _tkinter --exclude-module tkinter --exclude-module Tkinter --exclude-module PyQt5 --exclude-module matplotlib
 
 rm -rf build/
 rm -rf api.spec
 ```
+
+The multiple `--exclude-module MODULE_NAME` is for reducing the possible size. See [PyInstaller options document](https://pythonhosted.org/PyInstaller/usage.html#options) for more details. I do not explain the usage in details here.
 
 If everything goes well, the `pycalcdist/api/` folder should show up, as well as the executable inside that folder. This is the complete independent Python executable that could be moved to somewhere else.
 
@@ -540,7 +558,7 @@ In the end, run [`electron-packager`](https://github.com/electron-userland/elect
 # and copy the output into the correct distributable Electron folder...
 
 ./node_modules/.bin/electron-packager . --overwrite --ignore="pycalc$" --ignore="\.venv" --ignore="old-post-backup"
-## Packaging app for platform win32 x64 using electron v1.7.6
+## Packaging app for platform win32 x64 using electron v1.7.12
 ## Wrote new app to ./pretty-calculator-win32-x64
 ```
 
