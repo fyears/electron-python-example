@@ -16,7 +16,7 @@
   "author": "fyears",
   "license": "MIT",
   "dependencies": {
-    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
+    "zerorpc": "git+https://github.com/0rpc/zerorpc-node.git"
   },
   "devDependencies": {
     "electron": "^1.7.6",
