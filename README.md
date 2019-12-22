@@ -151,7 +151,7 @@ We need to configure the `package.json`, especially the `main` entry:
     "start": "electron ."
   },
   "dependencies": {
-    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
+    "zerorpc": "git+https://github.com/0rpc/zerorpc-node.git"
   },
   "devDependencies": {
     "electron": "^1.7.6",
@@ -190,7 +190,7 @@ npm install --runtime=electron --target=1.7.6
 ./node_modules/.bin/electron
 ```
 
-The `npm install` will install `zerorpc-node` from [my fork](https://github.com/0rpc/zerorpc-node/pull/84) to skip building from sources.
+~~The `npm install` will install `zerorpc-node` from [my fork](https://github.com/0rpc/zerorpc-node/pull/84) to skip building from sources.~~ Updated: the pull request of `zerorpc-node` was [merged](https://github.com/0rpc/zerorpc-node/pull/84) so everyone is encouraged to use the official repo instead.
 
 (Consider [adding `./.npmrc`](https://docs.npmjs.com/files/npmrc) in the project folder if necessary.)
 
